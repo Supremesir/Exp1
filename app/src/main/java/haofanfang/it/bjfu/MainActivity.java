@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -266,7 +267,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mFile = file;
         }
 
-
         @Override
         public void run() {
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
@@ -275,10 +275,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             mBitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            /**
+             * 修复了保存的图片被逆时针旋转了90度的问题
+             */
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            Bitmap bm = Bitmap.createBitmap(mBitmap, 0, 0, mBitmap.getWidth(), mBitmap.getHeight(), matrix, true);
+            mBitmap = bm;
+
             mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             jpeg = baos.toByteArray();
-
-
 
 
             try (FileOutputStream outputStream = new FileOutputStream(mFile)) {
@@ -318,25 +324,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG, "Could't find any suitable preview size");
             return choices[0];
         }
-    }
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ZXingLibrary.initDisplayOpinion(this);
-        root = findViewById(R.id.root);
-        file = findViewById(R.id.file);
-        resultText = findViewById(R.id.result);
-        mSurfaceView = findViewById(R.id.preview);
-
-        findViewById(R.id.album).setOnClickListener(this);
-        findViewById(R.id.shot).setOnClickListener(this);
-        findViewById(R.id.scan).setOnClickListener(this);
-
-        requiresCameraAndStoragePermission();
-
     }
 
     @Override
@@ -411,6 +398,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ZXingLibrary.initDisplayOpinion(this);
+        root = findViewById(R.id.root);
+        file = findViewById(R.id.file);
+        resultText = findViewById(R.id.result);
+        mSurfaceView = findViewById(R.id.preview);
+
+        findViewById(R.id.album).setOnClickListener(this);
+        findViewById(R.id.shot).setOnClickListener(this);
+        findViewById(R.id.scan).setOnClickListener(this);
+
+        requiresCameraAndStoragePermission();
+
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
     }
@@ -418,7 +423,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-
 
         mBackgroundThread = new HandlerThread("background");
         mBackgroundThread.start();
