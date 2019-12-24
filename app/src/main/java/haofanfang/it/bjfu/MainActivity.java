@@ -371,6 +371,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivityForResult(intent, RC_QRCODE);
                 break;
             }
+            case R.id.recog:{
+                LocalAsyncTask recog = new LocalAsyncTask();
+                recog.execute(mBitmap);
+            }
         }
     }
 
@@ -410,6 +414,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.album).setOnClickListener(this);
         findViewById(R.id.shot).setOnClickListener(this);
         findViewById(R.id.scan).setOnClickListener(this);
+        findViewById(R.id.recog).setOnClickListener(this);
 
         requiresCameraAndStoragePermission();
 

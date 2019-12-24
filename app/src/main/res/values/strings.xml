@@ -4,4 +4,5 @@
     <string name="album_at">相册</string>
     <string name="shot_bt">拍照</string>
     <string name="scan_bt">扫描</string>
+    <string name="recog_bt">识别</string>
 </resources>

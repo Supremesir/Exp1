@@ -73,6 +73,13 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:text="@string/scan_bt" />
+
+            <Button
+                android:id="@+id/recog"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/recog_bt" />
         </LinearLayout>
     </LinearLayout>
 
