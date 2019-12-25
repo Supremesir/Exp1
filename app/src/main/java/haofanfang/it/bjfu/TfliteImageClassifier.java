@@ -197,46 +197,6 @@ public class TfliteImageClassifier {
         return textToShow;
     }
 
-    /**
-     * 本地识别异步进程
-     */
-    private class LocalAsyncTask extends AsyncTask<Bitmap, Integer, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Bitmap... bitmaps) {
-            String result = null;
-            try {
-                result = new TfliteImageClassifier(MainActivity).classifyFrame(bitmaps[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-        }
-
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            resultTV.setText(result);
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-
-
-    }
 
 
 
