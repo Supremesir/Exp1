@@ -375,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.recog:{
                 LocalAsyncTask recog = new LocalAsyncTask();
                 recog.execute(mBitmap);
+
             }
         }
     }
@@ -530,11 +531,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected String doInBackground(Bitmap... bitmaps) {
             String result = null;
             try {
-                result = new TfliteImageClassifier(MainActivity).classifyFrame(bitmaps[0]);
+                result = new TfliteImageClassifier(MainActivity.this).classifyFrame(bitmaps[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return result;
         }
 
 
@@ -545,9 +546,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            resultTV.setText(result);
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            resultText.setText(result);
         }
 
         @Override

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 
 import org.tensorflow.lite.Interpreter;
@@ -64,7 +63,12 @@ public class TfliteImageClassifier {
     /**
      * Assets存储的模型名
      */
-    private static final String MODEL_PATH = "optimized_graph.lite";
+    private static final String MODEL_PATH = "my_model.lite";
+
+    /**
+     * Assets存储的标签名
+     */
+    private static final String LABEL_PATH = "retrained_labels.txt";
 
     /**
      * 识别结果最大显示数
@@ -115,8 +119,8 @@ public class TfliteImageClassifier {
         tflite.run(imgData, labelProbArray);
         long endTime = SystemClock.uptimeMillis();
         String textToShow = printTopKLabels();
-        textToShow = Long.toString(endTime - startTime) + "ms" + textToShow;
-        close();
+        textToShow = (endTime - startTime) + "ms" + textToShow;
+        tflite.close();
         return textToShow;
     }
 
@@ -163,7 +167,7 @@ public class TfliteImageClassifier {
         tbitmap.getPixels(intValues, 0,tbitmap.getWidth(), 0, 0, tbitmap.getWidth(), tbitmap.getHeight());
 
         int pixel = 0;
-        long startTime = SystemClock.uptimeMillis();
+        //long startTime = SystemClock.uptimeMillis();
         for (int i = 0; i < DIM_IMG_SIZE_X; ++i) {
             for (int j = 0; j < DIM_IMG_SIZE_Y; ++j) {
                 final int val = intValues[pixel++];
@@ -172,9 +176,7 @@ public class TfliteImageClassifier {
                 imgData.putFloat((((val) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
             }
         }
-        long endTime = SystemClock.uptimeMillis();
-
-
+        //long endTime = SystemClock.uptimeMillis();
     }
 
     /**
@@ -192,7 +194,7 @@ public class TfliteImageClassifier {
         final int size = sortedLabels.size();
         for (int i = 0; i < size; ++i) {
             Map.Entry<String, Float> label = sortedLabels.poll();
-            textToShow = String.format("%s%s", String.format("%s:%4.2f", label.getKey(), label.getValue()), textToShow);
+            textToShow = String.format("%s%s", String.format(" %s:%4.2f ", label.getKey(), label.getValue()), textToShow);
         }
         return textToShow;
     }
